@@ -1,9 +1,12 @@
+/*
+NFT Medatata Feature provided by: irwing@dfhcommunity.com
+*/
+
 var userDisplayDialogsPref = app.displayDialogs;
 
 app.displayDialogs = DialogModes.ALL;
 
 var savePath;
-
 app.displayDialogs = DialogModes.NO;
 
 function getType(thing){
@@ -100,17 +103,39 @@ function combine() {
       for(var i = 0; i < artLayerCollectionCollectionCombinations.length; i++) {
         hideAllArtLayers();
         var artLayerNames = [];
+        var node=[];
         for(var z = 0; z < artLayerCollectionCollectionCombinations[i].length; z++) {
           var artLayer = artLayerCollectionCollectionCombinations[i][z];
           artLayer.visible = true;
           artLayerNames.push(artLayer.parent.name);
           artLayerNames.push(artLayer.name);
+          node.push( {
+            trait_type:artLayer.parent.name,
+            value:artLayer.name
+          });
         }
-        saveDocumentAsPNG(savePath + '/' + normalizeSaveFileName(artLayerNames.join('')).substr(0, 254));
-        if(includePSDFiles) saveDocumentAsPSD(savePath + '/' + normalizeSaveFileName(artLayer.parent.name + artLayerNames.join('')).substr(0, 254));
-      }
-}
+        saveDocumentAsPNG(savePath + '/' + normalizeSaveFileName(i.toString()).substr(0, 254));
+        if(includePSDFiles) saveDocumentAsPSD(savePath + '/' + normalizeSaveFileName(+ i.toString()).substr(0, 254));
+			   // Create an object to represent the combination
+        var combinationObject = {
+          name:"CollectionName",
+          description:"Description",
+          image:"IPFS CID",//Example: ipfs://afsadfsdfsdfsdj
+          attributes: node
+        };
+        
 
+        saveJsonToFile(combinationObject, savePath + '/' + normalizeSaveFileName(i.toString()).substr(0, 254));
+    }
+	  
+
+}
+function saveJsonToFile(data, path) {
+  var jsonFile = new File(path);
+  jsonFile.open('w');
+  jsonFile.write(JSON.stringify(data, null, 2)); // Indentation for readability
+  jsonFile.close();
+}
 function getSmallestLayerSetCount() {
   var count = null,
   layerSets = app.activeDocument.layerSets;
@@ -148,7 +173,32 @@ function saveDocumentAsPNG(path) {
 function saveDocumentAsPSD(path) {
   app.activeDocument.saveAs(new File(path), new PhotoshopSaveOptions());
 }
-
+// Verifica si JSON está definido en el entorno
+if (typeof JSON === 'undefined') {
+  JSON = {
+    parse: function (str) {
+      return eval('(' + str + ')');
+    },
+    stringify: function (obj) {
+      var t = typeof obj;
+      if (t !== 'object' || obj === null) {
+        if (t === 'string') obj = '"' + obj + '"';
+        return String(obj);
+      } else {
+        var n, v, json = [],
+          arr = (obj && obj.constructor === Array);
+        for (n in obj) {
+          v = obj[n];
+          t = typeof v;
+          if (t === 'string') v = '"' + v + '"';
+          else if (t === 'object' && v !== null) v = JSON.stringify(v);
+          json.push((arr ? '' : '"' + n + '":') + String(v));
+        }
+        return (arr ? '[' : '{') + String(json) + (arr ? ']' : '}');
+      }
+    }
+  };
+}
 combine();
 
 app.displayDialogs = userDisplayDialogsPref;

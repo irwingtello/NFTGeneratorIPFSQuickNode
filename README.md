@@ -1,5 +1,6 @@
-# photoshopCompositionComposer
+# NFT Generator
 This script will create unique compositions out of members contained within the top-level document groups, and save them into a desired location both as a `png`- and a `psd`-file. Tested on Photoshop CC 2015.
+Also, these scripts create the metadata of your nfts, we take the groups as attributes and the layers as value.
 
 ## Usage
 1. See the Example and the Preview below to learn how it works
