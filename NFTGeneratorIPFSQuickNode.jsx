@@ -125,7 +125,7 @@ function combine() {
         };
         
 
-        saveJsonToFile(combinationObject, savePath + '/' + normalizeSaveFileName(i.toString()).substr(0, 254));
+        saveJsonToFile(combinationObject, savePath + '/' + normalizeSaveFileName(i.toString()).substr(0, 254) + ".json");
     }
 	  
 
